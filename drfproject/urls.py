@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from api import views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +29,6 @@ urlpatterns = [
     path('orders/', views.OrderListAPIView.as_view()),
     path('user-orders/', views.UserOrderListAPIView.as_view(), name='user-orders'),
     path('products/<int:pk>/', views.ProductDetailAPIView.as_view(), name='product_list'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
