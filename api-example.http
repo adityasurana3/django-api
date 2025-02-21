@@ -1,0 +1,22 @@
+GET http://127.0.0.1:8000/products/ HTTP/1.1
+
+###
+POST http://127.0.0.1:8000/api/token/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "",
+    "password": ""
+}
+
+###
+POST   http://127.0.0.1:8000/products/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 
+
+{
+    "name": "This is the test product http",
+    "description": "From rest Client",
+    "price": 123,
+    "stock":2
+}
