@@ -21,10 +21,16 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         return super().get_permissions()
 
 
-class ProductDetailAPIView(generics.RetrieveAPIView):
+class ProductDetailUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
+    
+    def get_permissions(self):
+        self.permission_classes = [AllowAny]
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
 
 
 class OrderListAPIView(generics.ListAPIView):
@@ -51,5 +57,4 @@ class ProductInfoAPIView(APIView):
             'max_price': products.aggregate(max_price=Max('price'))['max_price']
         })
         return Response(serializer.data)
-
 
