@@ -22,13 +22,14 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('products/', views.ProductListCreateAPIView.as_view()),
     path('products/info/', views.ProductInfoAPIView.as_view()),
-    path('orders/', views.OrderListAPIView.as_view()),
-    path('user-orders/', views.UserOrderListAPIView.as_view(), name='user-orders'),
+    # path('orders/', views.OrderListAPIView.as_view()),
+    # path('user-orders/', views.UserOrderListAPIView.as_view(), name='user-orders'),
     path('products/<int:pk>/', views.ProductDetailUpdateDeleteAPIView.as_view(), name='product_list'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -38,3 +39,8 @@ urlpatterns = [
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
+
+
+router = DefaultRouter()
+router.register('orders', viewset=views.OrderViewSet)
+urlpatterns += router.urls

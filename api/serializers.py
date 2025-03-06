@@ -17,7 +17,7 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Price can not be less than 0")
         return value
     
-class OrderItemSerailzer(serializers.ModelSerializer):
+class OrderItemSerializer(serializers.ModelSerializer):
     # product = ProductSerializer()
     product_name = serializers.CharField(source='product.name')
     product_price = serializers.DecimalField(max_digits=10, decimal_places=2, source='product.price')
@@ -26,7 +26,8 @@ class OrderItemSerailzer(serializers.ModelSerializer):
         fields = ('product_name', 'product_price', 'quantity', 'item_subtotal')
     
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerailzer(many=True, read_only=True)
+    order_id = serializers.UUIDField(read_only=True)
+    items = OrderItemSerializer(many=True, read_only=True)
     user = serializers.CharField(source='user.username')
     total_price = serializers.SerializerMethodField()
     class Meta:

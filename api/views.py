@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from .models import Product, Order, OrderItem
-from .serializers import ProductSerializer, OrderSerializer, OrderItemSerailzer, ProductInfoSerializer
+from .serializers import ProductSerializer, OrderSerializer, OrderItemSerializer, ProductInfoSerializer
 from rest_framework.response import Response
 from django.db.models import Max
 from rest_framework import generics
@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .filters import ProductFilter, IsStockFilterBackend
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import viewsets
 
 
 # Create your views here.
@@ -47,19 +48,24 @@ class ProductDetailUpdateDeleteAPIView(generics.RetrieveUpdateDestroyAPIView):
         return super().get_permissions()
 
 
-class OrderListAPIView(generics.ListAPIView):
-    queryset = Order.objects.prefetch_related('items__product')
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.prefetch_related('items__product').order_by('pk')
     serializer_class = OrderSerializer
+    permission_classes = [AllowAny]
+    
+# class OrderListAPIView(generics.ListAPIView):
+#     queryset = Order.objects.prefetch_related('items__product')
+#     serializer_class = OrderSerializer
 
 
-class UserOrderListAPIView(generics.ListAPIView):
-    queryset = Order.objects.prefetch_related('items__product')
-    serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+# class UserOrderListAPIView(generics.ListAPIView):
+#     queryset = Order.objects.prefetch_related('items__product')
+#     serializer_class = OrderSerializer
+#     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(user=self.request.user)
+#     def get_queryset(self):
+#         qs = super().get_queryset()
+#         return qs.filter(user=self.request.user)
 
 
 class ProductInfoAPIView(APIView):
