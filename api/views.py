@@ -8,10 +8,11 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import ProductFilter, IsStockFilterBackend
+from .filters import ProductFilter, IsStockFilterBackend, OrderFilter
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
+from rest_framework.decorators import action
 
 
 # Create your views here.
@@ -52,6 +53,15 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.prefetch_related('items__product').order_by('pk')
     serializer_class = OrderSerializer
     permission_classes = [AllowAny]
+    filterset_class = OrderFilter
+    filter_backends = [DjangoFilterBackend]
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if not self.request.user.is_staff:
+            return qs.filter(user=self.request.user)
+        return qs
+        
     
 # class OrderListAPIView(generics.ListAPIView):
 #     queryset = Order.objects.prefetch_related('items__product')
